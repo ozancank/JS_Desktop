@@ -4,12 +4,12 @@ const path = require("path");
 
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 
-let mainWindow;
+let mainWindow, addWindow;
 
 app.on("ready", () => {
   mainWindow = new BrowserWindow({
     webPreferences: { nodeIntegration: true, contextIsolation: false },
-    frame: true,    
+    frame: true,
   });
 
   mainWindow.setResizable(false);
@@ -27,6 +27,10 @@ app.on("ready", () => {
 
   mainWindow.on("close", () => {
     app.quit();
+  });
+
+  ipcMain.on("newTodo:close", () => {
+    addWindow.close();
   });
 });
 
@@ -73,7 +77,8 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 function createWindow() {
-  let addWindow = new BrowserWindow({
+  addWindow = new BrowserWindow({
+    webPreferences: { nodeIntegration: true, contextIsolation: false },
     width: 550,
     height: 250,
     title: "Yeni Bir Pencere",

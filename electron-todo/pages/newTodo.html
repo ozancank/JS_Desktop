@@ -20,12 +20,28 @@
             class="form-control mt-3 mb-3"
             value="Burada değişecek değer yazacak.."
           />
-          <a href="#" class="card-link btn btn-sm btn-outline-danger">vazgeç</a>
+          <a
+            href="#"
+            class="card-link btn btn-sm btn-outline-danger"
+            id="cancelBtn"
+            >vazgeç</a
+          >
           <a href="#" class="card-link btn btn-sm btn-outline-warning"
             >Güncelle</a
           >
         </div>
       </div>
     </div>
+
+    <script>
+      const electron = require("electron");
+      const { ipcRenderer } = electron;
+
+      const cancelBtn = document.querySelector("#cancelBtn");
+
+      cancelBtn.addEventListener("click", () => {
+        ipcRenderer.send("newTodo:close");
+      });
+    </script>
   </body>
 </html>
