@@ -30,6 +30,10 @@ app.on("ready", () => {
     app.quit();
   });
 
+  ipcMain.on("todo:close", () => {
+    app.quit();
+  });
+
   ipcMain.on("newTodo:close", () => {
     addWindow.close();
     addWindow = null;
@@ -62,7 +66,13 @@ const mainMenuTemplate = [
           createWindow();
         },
       },
-      { label: "Tümünü Sil" },
+      {
+        label: "Tümünü Sil",
+        click() {
+          todoList.splice(0, todoList.length);
+          mainWindow.webContents.send("todo:deleteAll");
+        },
+      },
       {
         label: "Çıkış",
         accelerator: process.platform === "darwin" ? "Command+Q" : "Ctrl+Q",
@@ -97,8 +107,8 @@ if (process.env.NODE_ENV !== "production") {
 function createWindow() {
   addWindow = new BrowserWindow({
     webPreferences: { nodeIntegration: true, contextIsolation: false },
-    width: 550,
-    height: 250,
+    width: 500,
+    height: 200,
     title: "Yeni Bir Pencere",
     frame: false,
   });
