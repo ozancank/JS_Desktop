@@ -3,21 +3,24 @@ const { ipcRenderer } = electron;
 
 checkTodoCount();
 
-const todoValue = document.querySelector("#todoValue");
+const inputValue = document.querySelector("#inputValue");
 
-todoValue.addEventListener("keypress", (e) => {
+inputValue.addEventListener("keypress", (e) => {
   if (e.keyCode === 13) {
     ipcRenderer.send("newTodo:save", {
       ref: "main",
       todoValue: e.target.value,
     });
-    todoValue.value = "";
+    inputValue.value = "";
   }
 });
 
 document.querySelector("#addBtn").addEventListener("click", () => {
-  ipcRenderer.send("newTodo:save", { ref: "main", todoValue: todoValue.value });
-  todoValue.value = "";
+  ipcRenderer.send("newTodo:save", {
+    ref: "main",
+    todoValue: inputValue.value,
+  });
+  inputValue.value = "";
 });
 
 document.querySelector("#closeBtn").addEventListener("click", () => {
@@ -37,22 +40,11 @@ ipcRenderer.on("todo:addItem", (e, todo) => {
 });
 
 ipcRenderer.on("todo:deleteAll", () => {
-  document.querySelector(".todo-container").innerHTML = "";
-  checkTodoCount();
-});
-
-function checkTodoCount() {
-  const container = document.querySelector(".todo-container");
-  const alertContainer = document.querySelector(".alert-container");
-  const length = container.children.length;
-  document.querySelector(".total-count-container").innerText = length;
-
-  if (length !== 0) {
-    alertContainer.style.display = "none";
-  } else {
-    alertContainer.style.display = "block";
+  if (confirm("Tüm kayıtları silmek ister misiniz?")) {
+    document.querySelector(".todo-container").innerHTML = "";
+    checkTodoCount();
   }
-}
+});
 
 function drawRow(todo) {
   const container = document.querySelector(".todo-container");
@@ -86,4 +78,17 @@ function drawRow(todo) {
   row.appendChild(col);
   container.appendChild(row);
   checkTodoCount();
+}
+
+function checkTodoCount() {
+  const container = document.querySelector(".todo-container");
+  const alertContainer = document.querySelector(".alert-container");
+  const length = container.children.length;
+  document.querySelector(".total-count-container").innerText = length;
+
+  if (length !== 0) {
+    alertContainer.style.display = "none";
+  } else {
+    alertContainer.style.display = "block";
+  }
 }

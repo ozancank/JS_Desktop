@@ -1,7 +1,9 @@
+process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = true;
+
 const electron = require("electron");
 const url = require("url");
 const path = require("path");
-const { addDB, deleteDB, getListDB } = require("./db.js");
+const { addDB, deleteDB, getListDB, deleteAllDB } = require("./db.js");
 
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 
@@ -10,7 +12,7 @@ let mainWindow, addWindow;
 app.on("ready", () => {
   mainWindow = new BrowserWindow({
     webPreferences: { nodeIntegration: true, contextIsolation: false },
-    frame: true,
+    frame: false,
   });
 
   mainWindow.setResizable(false);
@@ -74,8 +76,8 @@ const mainMenuTemplate = [
       {
         label: "Tümünü Sil",
         click() {
-          // todoList.splice(0, todoList.length);
-          // mainWindow.webContents.send("todo:deleteAll");
+          deleteAllDB();
+          mainWindow.webContents.send("todo:deleteAll");
         },
       },
       {

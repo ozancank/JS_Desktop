@@ -1,8 +1,10 @@
 const { JsonDB } = require("node-json-db");
 const { Config } = require("node-json-db/dist/lib/JsonDBConfig");
 
-const db = new JsonDB(new Config("myDatabase", true, false, "/"));
+const db = new JsonDB(new Config("assets/myDatabase", true, false, "/"));
 const entity = "/todo";
+
+if (!db.exists(entity) || db.count(entity) === 0) db.push(entity, []);
 
 module.exports.getListDB = function () {
   return db.getData(entity);
@@ -18,16 +20,8 @@ module.exports.addDB = function (text) {
     const lastItem = db.getData(`${entity}[-1]`);
     id = lastItem.id + 1;
   }
-  const index = db.getIndex(entity, db.count(entity) + 1, "id");
-  db.push(
-    `${entity}[]`,
-    {
-      id,
-      text,
-    },
-    true
-  );
-  return db.getData(`${entity}[${index}]`);
+  db.push(`${entity}[]`, { id, text }, true);
+  return db.getData(`${entity}[-1]`);
 };
 
 module.exports.deleteDB = function (id) {
@@ -36,4 +30,8 @@ module.exports.deleteDB = function (id) {
   if (index >= 0) {
     db.delete(`${entity}[${index}]`);
   }
+};
+
+module.exports.deleteAllDB = function () {
+  db.push(entity, []);
 };
