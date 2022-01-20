@@ -1,12 +1,11 @@
 const electron = require("electron");
 const url = require("url");
 const path = require("path");
-const { addDB, deleteDB } = require("./db.js");
+const { addDB, deleteDB, getListDB } = require("./db.js");
 
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 let mainWindow, addWindow;
-const todoList = [];
 
 app.on("ready", () => {
   mainWindow = new BrowserWindow({
@@ -50,6 +49,11 @@ app.on("ready", () => {
         addWindow = null;
       }
     }
+  });
+
+  mainWindow.webContents.once("dom-ready", () => {
+    const list = getListDB();
+    mainWindow.webContents.send("initApp", list);
   });
 });
 

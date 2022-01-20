@@ -26,7 +26,35 @@ document.querySelector("#closeBtn").addEventListener("click", () => {
   }
 });
 
+ipcRenderer.on("initApp", (e, list) => {
+  list.forEach((item) => {
+    drawRow(item);
+  });
+});
+
 ipcRenderer.on("todo:addItem", (e, todo) => {
+  drawRow(todo);
+});
+
+ipcRenderer.on("todo:deleteAll", () => {
+  document.querySelector(".todo-container").innerHTML = "";
+  checkTodoCount();
+});
+
+function checkTodoCount() {
+  const container = document.querySelector(".todo-container");
+  const alertContainer = document.querySelector(".alert-container");
+  const length = container.children.length;
+  document.querySelector(".total-count-container").innerText = length;
+
+  if (length !== 0) {
+    alertContainer.style.display = "none";
+  } else {
+    alertContainer.style.display = "block";
+  }
+}
+
+function drawRow(todo) {
   const container = document.querySelector(".todo-container");
 
   const row = document.createElement("div");
@@ -55,22 +83,4 @@ ipcRenderer.on("todo:addItem", (e, todo) => {
   row.appendChild(col);
   container.appendChild(row);
   checkTodoCount();
-});
-
-ipcRenderer.on("todo:deleteAll", () => {
-  document.querySelector(".todo-container").innerHTML = "";
-  checkTodoCount();
-});
-
-function checkTodoCount() {
-  const container = document.querySelector(".todo-container");
-  const alertContainer = document.querySelector(".alert-container");
-  const length = container.children.length;
-  document.querySelector(".total-count-container").innerText = length;
-
-  if (length !== 0) {
-    alertContainer.style.display = "none";
-  } else {
-    alertContainer.style.display = "block";
-  }
 }
