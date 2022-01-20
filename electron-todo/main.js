@@ -1,6 +1,7 @@
 const electron = require("electron");
 const url = require("url");
 const path = require("path");
+const { addDB, deleteDB } = require("./db.js");
 
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 
@@ -41,11 +42,7 @@ app.on("ready", () => {
 
   ipcMain.on("newTodo:save", (err, data) => {
     if (data) {
-      const todo = {
-        id: todoList.length + 1,
-        text: data.todoValue,
-      };
-      todoList.push(todo);
+      const todo = addDB(data.todoValue);
       mainWindow.webContents.send("todo:addItem", todo);
 
       if (data.ref === "new") {
@@ -69,8 +66,8 @@ const mainMenuTemplate = [
       {
         label: "Tümünü Sil",
         click() {
-          todoList.splice(0, todoList.length);
-          mainWindow.webContents.send("todo:deleteAll");
+          // todoList.splice(0, todoList.length);
+          // mainWindow.webContents.send("todo:deleteAll");
         },
       },
       {
@@ -126,8 +123,4 @@ function createWindow() {
   addWindow.on("close", () => {
     addWindow = null;
   });
-}
-
-function getTodoList() {
-  console.log(todoList);
 }
