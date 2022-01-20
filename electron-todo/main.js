@@ -55,6 +55,10 @@ app.on("ready", () => {
     const list = getListDB();
     mainWindow.webContents.send("initApp", list);
   });
+
+  ipcMain.on("remove:todo", (e, id) => {
+    deleteDB(id);
+  });
 });
 
 const mainMenuTemplate = [

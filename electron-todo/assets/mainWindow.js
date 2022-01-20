@@ -71,8 +71,11 @@ function drawRow(todo) {
   const deleteBtn = document.createElement("button");
   deleteBtn.className = "btn btn-sm btn-outline-danger flex-shrink-1";
   deleteBtn.innerText = "X";
+  deleteBtn.setAttribute("data-id", todo.id);
+
   deleteBtn.addEventListener("click", (e) => {
     if (confirm("Bu kaydı silmek istediğinizden emin misiniz?")) {
+      ipcRenderer.send("remove:todo", e.target.getAttribute("data-id"));
       e.target.parentNode.parentNode.remove();
       checkTodoCount();
     }

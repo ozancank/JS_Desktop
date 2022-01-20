@@ -13,8 +13,12 @@ module.exports.countDB = function () {
 };
 
 module.exports.addDB = function (text) {
-  const id = db.count(entity) + 1;
-  const index = db.getIndex(entity, id, "id");
+  let id = 1;
+  if (db.count(entity) > 0) {
+    const lastItem = db.getData(`${entity}[-1]`);
+    id = lastItem.id + 1;
+  }
+  const index = db.getIndex(entity, db.count(entity) + 1, "id");
   db.push(
     `${entity}[]`,
     {
@@ -27,7 +31,8 @@ module.exports.addDB = function (text) {
 };
 
 module.exports.deleteDB = function (id) {
-  const index = db.getIndex(entity, id, "id");
+  const parseId = parseInt(id);
+  const index = db.getIndex(entity, parseId, "id");
   if (index >= 0) {
     db.delete(`${entity}[${index}]`);
   }
