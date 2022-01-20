@@ -5,6 +5,7 @@ const path = require("path");
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 let mainWindow, addWindow;
+const todoList = [];
 
 app.on("ready", () => {
   mainWindow = new BrowserWindow({
@@ -31,6 +32,23 @@ app.on("ready", () => {
 
   ipcMain.on("newTodo:close", () => {
     addWindow.close();
+    addWindow = null;
+  });
+
+  ipcMain.on("newTodo:save", (err, data) => {
+    if (data) {
+      const todo = {
+        id: todoList.length + 1,
+        text: data.todoValue,
+      };
+      todoList.push(todo);
+      mainWindow.webContents.send("todo:addItem", todo);
+
+      if (data.ref === "new") {
+        addWindow.close();
+        addWindow = null;
+      }
+    }
   });
 });
 
@@ -98,4 +116,8 @@ function createWindow() {
   addWindow.on("close", () => {
     addWindow = null;
   });
+}
+
+function getTodoList() {
+  console.log(todoList);
 }
